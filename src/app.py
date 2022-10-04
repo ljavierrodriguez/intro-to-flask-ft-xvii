@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, json
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -11,7 +11,25 @@ def main():
 @app.route('/api/users', methods=['GET'])
 def users():
     users = [{"id": 1, "name": "Luis"}]
-    return jsonify(users), 204
+    return jsonify(users), 201
+
+@app.route('/api/users/<int:id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def users_by_id(id):
+    
+    if request.method == 'GET':
+        users = [{"id": 1, "name": "Luis"}]
+        query = request.query_string
+        print(query)
+        user = list(map(lambda user: user if user["id"] == id else None, users))
+        return jsonify(user[0]), 200
+
+    if request.method == 'POST':
+        
+        data = json.loads(request.data)
+        name = request.json.get('name')
+        print(data["name"])
+        print(name)
+        return jsonify(data)
 
 if __name__ == '__main__':
     app.run()
